@@ -5,8 +5,8 @@
   "type": "module",
   "homepage": "https://blkfinch.github.io/777",
   "scripts": {
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "predeploy": "pnpm run build",
+    "gh_deploy": "gh-pages -d dist",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
