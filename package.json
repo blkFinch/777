@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://blkfinch.github.io/777",
+  "homepage": "https://github.com/blkFinch/777/",
   "scripts": {
     "predeploy": "pnpm run build",
     "gh_deploy": "gh-pages -d dist",
