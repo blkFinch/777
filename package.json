@@ -3,9 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://github.com/blkFinch/777/",
+  "homepage": ".",
   "scripts": {
-    "predeploy": "pnpm run build",
+    "predeploy": "npm run build",
     "gh_deploy": "gh-pages -d dist",
     "dev": "vite",
     "build": "vite build",
@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "gh-pages": "^5.0.0",
+    "pnpm": "^7.26.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
