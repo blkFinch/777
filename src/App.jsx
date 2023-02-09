@@ -1,39 +1,54 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
-import './styles/main-styles.scss'
-
-
+import { useState } from "react";
+import reactLogo from "./assets/react.svg";
+import "./App.css";
+import "./styles/main-styles.scss";
+import SearchBar from "./components/searchBar";
+import Data from "./assets/liber777.json";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [target, setTarget] = useState(() => "init");
+  const [data] = useState(() => loadData()); //lazy init should only read data once
+
+  //TODO: parse json to match array of objs like below
+  const dummy = {
+    colNumber: "III.",
+    colName: "English of Col. II.",
+    rows: {
+      0: ["multiple", "names"],
+      1: "Crown",
+      2: "Wisdom",
+      3: "Understanding",
+    },
+  };
+
+  function loadData() {
+    const res = [];
+    for (var i in Data) {
+      res.push([i, Data[i]]);
+    }
+    return res;
+  }
+
+  function handleSearch(e) {
+    console.log(target);
+    console.log(data);
+    // const res = data[2].find((elem) => elem.includes(target));
+    // console.log(res);
+  }
+
+  function onTargetUpdate(e) {
+    setTarget(e.target.value);
+  }
 
   return (
     <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/777/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button className='button is-primary'>Bulma Button</button>
-        <h2>Future Home of 777</h2>
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <SearchBar
+        placeholder="Enter target symbol"
+        handleSearch={handleSearch}
+        handleTargetUpdate={onTargetUpdate}
+      />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
