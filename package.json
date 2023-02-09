@@ -3,19 +3,21 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": ".",
+  "homepage": "http://blkfinch.github.io/777",
   "scripts": {
     "predeploy": "npm run build",
-    "gh_deploy": "gh-pages -d dist",
+    "gh-deploy": "npm run build && gh-pages -d dist",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "bulma": "^0.9.4",
     "gh-pages": "^5.0.0",
     "pnpm": "^7.26.3",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "sass": "^1.58.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.27",
