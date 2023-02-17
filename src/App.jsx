@@ -8,6 +8,7 @@ import Data from "./assets/liber777.json";
 function App() {
   const [target, setTarget] = useState(() => "init");
   const [data] = useState(() => loadData()); //lazy init should only read data once
+  const [results, setResults] = useState(() => []);
 
   // converts data to an array of arrays
   // element 0 is the Roman numeral
@@ -19,49 +20,6 @@ function App() {
     }
     return res;
   }
-
-  const dummyData = [
-    {
-      "XXXIV.": {
-        columnName: "Some Greek Gods",
-        0: "Pan",
-        1: "Zeus, Iacchus",
-        2: "Athena, Uranus [[Hermes]]",
-        3: "Cybele, Demeter, Rhea, Heré, [[Psyché, Kronos]]",
-        4: "Poseidon [[Zeus]]",
-        5: "Ares, Hades",
-        6: "Iacchus, Apollo, Adonis [[Dionysus, Bacchus]]",
-        7: "Aphrodité, Niké",
-        8: "Hermes",
-        9: "Zeus (as D), Diana of Epheus (as phallic stone [[and =]]) [[Eros]] ",
-        10: "Persephone, [Adonis], Psyché",
-        11: "Zeus",
-        12: "Hermes ",
-        13: "Artemis, Hekaté ",
-        14: "Aphrodité ",
-        15: "Athena",
-        16: "[Heré]",
-        17: "Castor and Pollux, Apollo the Diviner [[Eros]]",
-        18: "Apollo the Charioteer",
-        19: "Demeter [borne by lions]",
-        20: "[Attis]",
-        21: "Zeus",
-        22: "Themis, Minos, Aeacus and Rhadamanthus",
-        23: "Poseidon",
-        24: "Ares [[Apollo the Pythean, Thanatos]]",
-        25: "Apollo, Artemis (hunters)",
-        26: "Pan, Priapus [Erect Hermes and Bacchus]",
-        27: "Ares, [[Athena]]",
-        28: "[Athena] Ganymede",
-        29: "Poseidon [[Hermes Psychopompos]]",
-        30: "Helios, Apollo",
-        31: "Hades",
-        32: "[Athena]",
-        "32 bis": "[Demeter] [[Gaia]]",
-        "31 bis": "Iacchus",
-      },
-    },
-  ];
 
   //Search Functions
   //
@@ -96,21 +54,23 @@ function App() {
   }
 
   function handleSearch(e) {
-    console.log(target); //TODO: make target auto capitalize
+    var res = [];
+    data.forEach((elem) => {
+      if (checkIfTargetExists(target, elem[1])) {
+        console.log("found in " + elem[1].columnName);
+        let ret = {
+          column: elem[1].columnName,
+          rows: findInData(target, elem[1]),
+        };
+        res.push(ret);
+      }
+    });
+    setResults(res);
+  }
 
-    //TODO: optimize this algorithm
-    //for each element in data do
-    //check if target exists in element
-    //if it does, capture the column name then perform the following:
-
-    // check if target exists in blob
-    checkIfTargetExists(target, dummyData)
-      ? console.log("found")
-      : console.log("not found");
-
-    // if it does, split blob into array of strings
-    const splitBlob = JSON.stringify(dummyData).split(":");
-    console.log(splitBlob);
+  function findInData(target, data) {
+    // split blob into array of strings
+    const splitBlob = JSON.stringify(data).split(":");
 
     // filter into array of indexes where target exists
     const hits = splitBlob
@@ -122,7 +82,9 @@ function App() {
     // map indexes to two arrays: column keys, and string values
     const colKeys = hits.map((i) => {
       var targ = splitBlob[i - 1];
-      return targ.split(",").slice(-1)[0]; //last element is key as it appears before the ':'
+      //last element is key as it appears before the ':', filter for number
+      var num = targ.split(",").slice(-1)[0].match(/\d+/g);
+      return num ? num[0] : "title";
     });
 
     const colVals = hits.map((i) => {
@@ -132,24 +94,53 @@ function App() {
       return targ.join(",");
     });
 
+    let ret = [];
+
     colKeys.forEach((elem, index) => {
-      console.log(elem, colVals[index]);
+      ret.push({ row: elem, value: colVals[index] });
     });
+
+    return ret;
   }
 
   //END Search Functions
 
+  // COMPONENTS
+  //
+  //TODO: make this a component, style it
+  function ResDisplay({ result }) {
+    return (
+      <div>
+        <p className="menu-label">{result.column}</p>
+        <ul className="menu-list">
+          {result.rows.map((row) => (
+            <li key={row.row}>
+              <a>{row.value}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+
   function onTargetUpdate(e) {
-    setTarget(e.target.value);
+    setTarget(toTitleCase(e.target.value));
   }
   //TODO: return a list of results while typing
   return (
     <div className="App">
-      <SearchBar
-        placeholder="Enter target symbol"
-        handleSearch={handleSearch}
-        handleTargetUpdate={onTargetUpdate}
-      />
+      <div className="columns">
+        <aside className="menu" style={{ textAlign: "left" }}>
+          {results.map((elem) => (
+            <ResDisplay result={elem} key={elem.column} />
+          ))}
+        </aside>
+        <SearchBar
+          placeholder="Enter target symbol"
+          handleSearch={handleSearch}
+          handleTargetUpdate={onTargetUpdate}
+        />
+      </div>
     </div>
   );
 }
