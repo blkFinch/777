@@ -54,6 +54,11 @@ function App() {
     setRows(res);
   }
 
+  function onTargetUpdate(e) {
+    setTarget(toTitleCase(e.target.value));
+    handleSearch(e);
+  }
+
   //Search Functions
   //
   function toTitleCase(str) {
@@ -64,26 +69,6 @@ function App() {
   //TODO: needs to remove special characters
   function checkIfTargetExists(target, data) {
     return JSON.stringify(data).indexOf(toTitleCase(target)) > -1;
-  }
-
-  function getKeyByValue(object, value) {
-    return Object.keys(object).find((key) => object[key] === value);
-  }
-
-  function filterByValue(object, target) {
-    const res = getKeyByValue(object, target);
-    if (res) return res;
-
-    for (var i = 0; i < Object.keys(object).length; i++) {
-      if (typeof object[Object.keys(object)[i]] == "object") {
-        var o = filterByValue(object[Object.keys(object)[i]], target);
-        if (o != null) {
-          return o;
-        }
-      }
-    }
-
-    return null;
   }
 
   function findInData(target, data) {
@@ -164,11 +149,6 @@ function App() {
     }
   }
 
-  function onTargetUpdate(e) {
-    setTarget(toTitleCase(e.target.value));
-    handleSearch(e);
-  }
-  //TODO: return a list of results while typing
   return (
     <div className="App">
       <RowsDisplay />
