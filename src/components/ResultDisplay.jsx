@@ -1,16 +1,21 @@
 import * as React from "react";
 
-export function ResultDisplay({ results, ...props }) {
+//TODO: style it
+function ResultDisplay({ result, onRowClick }) {
   return (
-    <div className="box">
-      {results.map((elem) => (
-        <div className="content">
-          <p>
-            <strong>{results.columnName}</strong>
-          </p>
-          <p>{results.value}</p>
-        </div>
-      ))}
+    <div>
+      <p className="menu-label has-text-light">{result.column}</p>
+      <ul className="menu-list">
+        {result.rows.map((row) => (
+          <li key={row.row}>
+            <a className="has-text-grey" onClick={() => onRowClick(row.row)}>
+              {row.value}
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
+
+export default ResultDisplay;

@@ -3,12 +3,14 @@ import reactLogo from "./assets/react.svg";
 import "./App.css";
 import "./styles/main-styles.scss";
 import SearchBar from "./components/searchBar";
+import ResultDisplay from "./components/ResultDisplay";
 import Data from "./assets/liber777.json";
 
 function App() {
-  const [target, setTarget] = useState(() => "init");
+  const [target, setTarget] = useState("init");
   const [data] = useState(() => loadData()); //lazy init should only read data once
-  const [results, setResults] = useState(() => []);
+  const [results, setResults] = useState([]);
+  const [rows, setRows] = useState([]);
 
   // converts data to an array of arrays
   // element 0 is the Roman numeral
@@ -19,6 +21,37 @@ function App() {
       res.push([i, Data[i]]);
     }
     return res;
+  }
+
+  //Handlers
+  //
+  function handleSearch(e) {
+    let res = [];
+    data.forEach((elem) => {
+      if (checkIfTargetExists(target, elem[1])) {
+        console.log("found in " + elem[1].columnName);
+        let ret = {
+          column: elem[1].columnName,
+          rows: findInData(target, elem[1]),
+        };
+        res.push(ret);
+      }
+    });
+    setResults(res);
+  }
+
+  function handleRowClick(row) {
+    let res = [];
+    data.forEach((elem) => {
+      if (elem[1][row]) {
+        let ret = {
+          column: elem[1].columnName,
+          value: elem[1][row],
+        };
+        res.push(ret);
+      }
+    });
+    setRows(res);
   }
 
   //Search Functions
@@ -51,21 +84,6 @@ function App() {
     }
 
     return null;
-  }
-
-  function handleSearch(e) {
-    var res = [];
-    data.forEach((elem) => {
-      if (checkIfTargetExists(target, elem[1])) {
-        console.log("found in " + elem[1].columnName);
-        let ret = {
-          column: elem[1].columnName,
-          rows: findInData(target, elem[1]),
-        };
-        res.push(ret);
-      }
-    });
-    setResults(res);
   }
 
   function findInData(target, data) {
@@ -102,44 +120,77 @@ function App() {
 
     return ret;
   }
-
   //END Search Functions
 
   // COMPONENTS
   //
-  //TODO: make this a component, style it
-  function ResDisplay({ result }) {
+  function RowsDisplay() {
+    //TODO: show the selected symbol at the top of the table
     return (
-      <div>
-        <p className="menu-label">{result.column}</p>
-        <ul className="menu-list">
-          {result.rows.map((row) => (
-            <li key={row.row}>
-              <a>{row.value}</a>
-            </li>
+      <table
+        className="table is-bordered
+                        is-narrow 
+                        is-hoverable 
+                        has-text-light
+                        has-background-dark"
+      >
+        <tbody>
+          {rows.map((elem, index) => (
+            <tr key={elem.column + index}>
+              <th className="has-text-light">{elem.column}</th>
+              <td>{elem.value}</td>
+            </tr>
           ))}
-        </ul>
-      </div>
+        </tbody>
+      </table>
     );
+  }
+
+  function SearchResultDisplay() {
+    if (results.length > 0) {
+      return (
+        <div className="column">
+          <aside className="menu has-text-light" style={{ textAlign: "left" }}>
+            {results.map((elem) => (
+              <ResultDisplay
+                result={elem}
+                key={elem.column}
+                onRowClick={handleRowClick}
+              />
+            ))}
+          </aside>
+        </div>
+      );
+    }
   }
 
   function onTargetUpdate(e) {
     setTarget(toTitleCase(e.target.value));
+    handleSearch(e);
   }
   //TODO: return a list of results while typing
   return (
     <div className="App">
-      <div className="columns">
-        <aside className="menu" style={{ textAlign: "left" }}>
-          {results.map((elem) => (
-            <ResDisplay result={elem} key={elem.column} />
-          ))}
-        </aside>
-        <SearchBar
-          placeholder="Enter target symbol"
-          handleSearch={handleSearch}
-          handleTargetUpdate={onTargetUpdate}
-        />
+      <RowsDisplay />
+      <div className="columns is-centered has-text-grey">
+        <SearchResultDisplay />
+        <div className="column is-6">
+          <div className="content">
+            <h2 className="title is-2 has-text-light">777</h2>
+            <p>
+              This is a quick resource to find correspondances between symbols
+              using the tables of Aliester Crowley's Liber 777. Simply start
+              typing the name of any diety, tarot card , color, or any other
+              symbol from the book and the results will appear to the left.
+              Click on a row to display all the correspondances for that row.
+            </p>
+          </div>
+          <SearchBar
+            placeholder="Begin typing to search"
+            handleSearch={handleSearch}
+            handleTargetUpdate={onTargetUpdate}
+          />
+        </div>
       </div>
     </div>
   );
