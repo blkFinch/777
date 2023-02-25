@@ -55,6 +55,7 @@ function App() {
   }
 
   function onTargetUpdate(e) {
+    if(rows != []){ clearRows() }
     setTarget(toTitleCase(e.target.value));
     handleSearch(e);
   }
@@ -106,6 +107,10 @@ function App() {
     return ret;
   }
   //END Search Functions
+
+  function clearRows(){
+    setRows([])
+  }
 
   // COMPONENTS
   //
