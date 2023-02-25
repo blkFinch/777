@@ -11,6 +11,7 @@ function App() {
   const [data] = useState(() => loadData()); //lazy init should only read data once
   const [results, setResults] = useState([]);
   const [rows, setRows] = useState([]);
+  const [targetName, setTargetName] = useState("");
 
   // converts data to an array of arrays
   // element 0 is the Roman numeral
@@ -43,15 +44,17 @@ function App() {
   function handleRowClick(row) {
     let res = [];
     data.forEach((elem) => {
-      if (elem[1][row]) {
+      if (elem[1][row.row]) {
         let ret = {
           column: elem[1].columnName,
-          value: elem[1][row],
+          value: elem[1][row.row],
         };
         res.push(ret);
       }
     });
     setRows(res);
+    setTargetName(row.row + " "  + row.value);
+    window.scrollTo({top: 0, left: 0, behavior: "smooth"})
   }
 
   function onTargetUpdate(e) {
@@ -117,6 +120,8 @@ function App() {
   function RowsDisplay() {
     //TODO: show the selected symbol at the top of the table
     return (
+      <>
+      <h2 className="subtitle is-2 has-text-light">{targetName}</h2>
       <table
         className="table is-bordered
                         is-narrow 
@@ -133,6 +138,7 @@ function App() {
           ))}
         </tbody>
       </table>
+      </>
     );
   }
 

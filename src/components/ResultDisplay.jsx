@@ -8,7 +8,7 @@ function ResultDisplay({ result, onRowClick }) {
       <ul className="menu-list">
         {result.rows.map((row) => (
           <li key={row.row}>
-            <a className="has-text-grey" onClick={() => onRowClick(row.row)}>
+            <a className="has-text-grey" onClick={() => onRowClick(row)}>
               {row.value}
             </a>
           </li>
